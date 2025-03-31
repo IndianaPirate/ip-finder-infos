@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recherche IP</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Recherche d'IP</h2>
+        <input type="text" id="ipInput" placeholder="Entrez une adresse IP">
+        <button onclick="fetchIPInfo()">Rechercher</button>
+        <table id="resultTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Champ</th>
+                    <th>Valeur</th>
+                </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        function fetchIPInfo() {
+            const ip = document.getElementById('ipInput').value;
+            if (!ip) {
+                alert('Veuillez entrer une adresse IP');
+                return;
+            }
+            fetch(`http://ip-api.com/json/${ip}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status !== "success") {
+                        alert("IP invalide ou non trouvée");
+                        return;
+                    }
+                    
+                    const resultBody = document.getElementById("resultBody");
+                    resultBody.innerHTML = ""; // Clear previous results
+                    
+                    Object.entries(data).forEach(([key, value]) => {
+                        let row = `<tr><td>${key}</td><td>${value}</td></tr>`;
+                        resultBody.innerHTML += row;
+                    });
+                    
+                    document.getElementById("resultTable").style.display = "table";
+                })
+                .catch(error => alert("Erreur lors de la récupération des données"));
+        }
+    </script>
+</body>
+</html>
